@@ -65,8 +65,20 @@ def format_data():
     
     data = get_data(full_url) #get data from api - returns a dictionary
     df = pd.DataFrame.from_dict(data['data'])  #create dataframe
-    #DO SOME FUN STUFF HERE 
     
-    print(df.head())
+    #pull out dictionary into two columns
+    cases = df['cases'].apply(pd.Series)
+    deaths = df['deaths'].apply(pd.Series)
+    
+    #rename columns
+    cases.columns= ['cases_daily','cases_cumulative']
+    deaths.columns = ['deaths_daily', 'deaths_cumulative']  
+    #####come back and unpack vaccines if you get time - need to fix data grab from API####
+    
+    
+    df = df.drop(['cases', 'deaths', 'vaccines'], axis=1) #delete dictionary column
+    covid_data = pd.concat([df,cases,deaths], axis=1).iloc[::-1] #put dataframes together and reverse index
+    
+    return covid_data
     
 print(format_data())
