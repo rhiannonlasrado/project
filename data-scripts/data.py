@@ -79,6 +79,9 @@ def format_data():
     df = df.drop(['cases', 'deaths', 'vaccines'], axis=1) #delete dictionary column
     covid_data = pd.concat([df,cases,deaths], axis=1).iloc[::-1] #put dataframes together and reverse index
     
-    return covid_data
+    #write a json file to pass into javascript
+    with open('data.json', 'w') as f:
+        f.write(covid_data.to_json(orient='records', lines=True))
     
-print(format_data())
+format_data()
+print("script has finished running")
