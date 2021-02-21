@@ -1,7 +1,7 @@
 #API LINK https://coronavirus.data.gov.uk/details/developers-guide
 #Helpful for terminology: https://www.gov.uk/government/publications/coronavirus-covid-19-testing-data-methodology/covid-19-testing-data-methodology-note
 
-import pandas as pd, requests, json
+import pandas as pd, requests, json, os
 from urllib.parse import urlencode
 
 area_types = ['overview','nation','region','nhsRegion','utla','ltla']
@@ -79,9 +79,13 @@ def format_data():
     df = df.drop(['cases', 'deaths', 'vaccines'], axis=1) #delete dictionary column
     covid_data = pd.concat([df,cases,deaths], axis=1).iloc[::-1] #put dataframes together and reverse index
     
+    os.chdir('V1-html-only/resources/data') #change directory
+    
     #write a json file to pass into javascript
-    with open('data.json', 'w') as f:
-        f.write(covid_data.to_json(orient='records', lines=True))
+    with open('data.js', 'w') as f:
+        f.write("var covid_data =")
+        f.write(covid_data.to_json(orient='records'))
+        f.write(';')
     
 format_data()
 print("script has finished running")
